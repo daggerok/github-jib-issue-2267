@@ -77,13 +77,4 @@
 		</plugins>
 	</build>
 
-	<profiles>
-		<profile>
-			<id>1.8.0</id>
-			<properties>
-				<jib-maven-plugin.version>1.8.0</jib-maven-plugin.version>
-			</properties>
-		</profile>
-	</profiles>
-
 </project>
