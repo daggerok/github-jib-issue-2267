@@ -2,6 +2,8 @@
 
 See: https://github.com/GoogleContainerTools/jib/issues/2267
 
+<!--
+
 Steps to reproduce:
 
 * clone repo:
@@ -22,5 +24,17 @@ Steps to reproduce:
   # expected output..
   ```
 
+-->
+
 [Resolution](https://github.com/GoogleContainerTools/jib/issues/2267#issuecomment-583124177): with 2.0.0 using fat jars is not possible anymore.
 Check alternative [here](https://github.com/GoogleContainerTools/jib/issues/2267#issuecomment-583107466) or [here](https://github.com/GoogleContainerTools/jib/issues/2267#issuecomment-583124177).
+
+```bash
+./mvnw -P before-2
+docker run --rm -it daggerok/github-jib-issue-2267-app-1.8.0
+
+./mvnw -P after-2
+docker run --rm -it daggerok/github-jib-issue-2267-app-2.0.0
+```
+
+See [pom.xml file](pom.xml) for details.

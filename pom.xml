@@ -1,28 +1,33 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
-	<modelVersion>4.0.0</modelVersion>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+		 xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+		 xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+
 	<parent>
 		<groupId>org.springframework.boot</groupId>
 		<artifactId>spring-boot-starter-parent</artifactId>
 		<version>2.2.4.RELEASE</version>
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
+
+	<packaging>pom</packaging>
+	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.example</groupId>
 	<artifactId>github-jib-issue-2267</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<packaging>pom</packaging>
+
 	<modules>
 		<module>app</module>
 	</modules>
+
 	<properties>
 		<java.version>1.8</java.version>
 		<docker-repository>daggerok</docker-repository>
-		<jib-maven-plugin.version>2.0.0</jib-maven-plugin.version>
+		<jib-maven-plugin.version>SEE_PROFILES</jib-maven-plugin.version>
 	</properties>
 
 	<build>
-		<defaultGoal>package jib:dockerBuild</defaultGoal>
+		<defaultGoal>package</defaultGoal>
 		<pluginManagement>
 			<plugins>
 				<plugin>
@@ -46,35 +51,85 @@
 				</plugin>
 			</plugins>
 		</pluginManagement>
-		<plugins>
-			<plugin>
-				<groupId>com.google.cloud.tools</groupId>
-				<artifactId>jib-maven-plugin</artifactId>
-				<version>${jib-maven-plugin.version}</version>
-				<configuration>
-					<containerizingMode>packaged</containerizingMode>
-					<container>
-						<appRoot>/tmp</appRoot>
-						<!--<creationTime>USE_CURRENT_TIMESTAMP</creationTime-->>
-						<entrypoint>
-							<shell>ash</shell>
-							<option>-c</option>
-							<arg>java -jar /tmp/classpath/*.jar</arg>
-						</entrypoint>
-					</container>
-					<from>
-						<image>openjdk:8u212-jre-alpine3.9</image>
-					</from>
-					<to>
-						<image>${docker-repository}/${project.parent.artifactId}-${project.artifactId}-${jib-maven-plugin.version}</image>
-						<tags>
-							<tag>${project.version}</tag>
-							<tag>latest</tag>
-						</tags>
-					</to>
-				</configuration>
-			</plugin>
-		</plugins>
 	</build>
+
+	<profiles>
+		<profile>
+			<id>after-2</id>
+			<properties>
+				<jib-maven-plugin.version>2.0.0</jib-maven-plugin.version>
+			</properties>
+			<build>
+				<defaultGoal>package jib:dockerBuild</defaultGoal>
+				<plugins>
+					<plugin>
+						<groupId>com.google.cloud.tools</groupId>
+						<artifactId>jib-maven-plugin</artifactId>
+						<version>${jib-maven-plugin.version}</version>
+						<configuration>
+							<containerizingMode>packaged</containerizingMode>
+							<container>
+								<appRoot>/tmp</appRoot>
+								<creationTime>USE_CURRENT_TIMESTAMP</creationTime>
+								<entrypoint>
+									<shell>ash</shell>
+									<option>-c</option>
+									<arg>java -cp /tmp/classpath/*:/tmp/libs/* com.example.app.AppApplication</arg>
+								</entrypoint>
+							</container>
+							<from>
+								<image>openjdk:8u212-jre-alpine3.9</image>
+							</from>
+							<to>
+								<image>${docker-repository}/${project.parent.artifactId}-${project.artifactId}-${jib-maven-plugin.version}</image>
+								<tags>
+									<tag>${project.version}</tag>
+									<tag>latest</tag>
+								</tags>
+							</to>
+						</configuration>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+		<profile>
+			<id>before-2</id>
+			<properties>
+				<jib-maven-plugin.version>1.8.0</jib-maven-plugin.version>
+			</properties>
+			<build>
+				<defaultGoal>package jib:dockerBuild</defaultGoal>
+				<plugins>
+					<plugin>
+						<groupId>com.google.cloud.tools</groupId>
+						<artifactId>jib-maven-plugin</artifactId>
+						<version>${jib-maven-plugin.version}</version>
+						<configuration>
+							<containerizingMode>packaged</containerizingMode>
+							<container>
+								<appRoot>/tmp</appRoot>
+								<creationTime>USE_CURRENT_TIMESTAMP</creationTime>
+								<entrypoint>
+									<shell>ash</shell>
+									<option>-c</option>
+									<arg>java -jar /tmp/classpath/*.jar</arg>
+								</entrypoint>
+							</container>
+							<from>
+								<image>openjdk:8u212-jre-alpine3.9</image>
+							</from>
+							<to>
+								<image>${docker-repository}/${project.parent.artifactId}-${project.artifactId}-${jib-maven-plugin.version}</image>
+								<tags>
+									<tag>${project.version}</tag>
+									<tag>latest</tag>
+								</tags>
+							</to>
+						</configuration>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+	</profiles>
 
 </project>
